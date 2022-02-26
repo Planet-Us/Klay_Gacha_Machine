@@ -173,7 +173,11 @@ program
         });   
           
         if(uriCnt == 10 || i == (totalCnt-1)){
-          console.log("Upload " + (i-9) + "-" + (i));
+            if(uriCnt == 10){
+                console.log("Upload " + (i-9) + "-" + (i));
+            }else{
+                console.log("Upload " + (i-totalCnt-1) + "-" + (i));
+            }
           cacheData = {
             "gachaMachineId" : minterAddress,
             "items" : items
