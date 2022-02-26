@@ -1,0 +1,10 @@
+{
+    "NumberOfNFT" : ,
+    "TokenName" : "put_your_nft_name",
+    "TokenSymbol" : "",
+    "TreasuryAccount": "",
+    "PrivateKey": "",
+    "pinataApiKey":"",
+    "pinataSecretApiKey": "",
+    "imageExtension": "png"
+}
