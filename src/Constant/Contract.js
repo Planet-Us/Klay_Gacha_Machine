@@ -1,5 +1,6 @@
 export default {
     
+    "gachaAddressBaobab" : "0x62Cc6ba7fC76b124B42687703d682EC120bc1F1d",
     "gachaAddress" : "0x40466BB10bb95d984E55554b6EDd05CA73187f29",
     "gachaABI" : [
 		{

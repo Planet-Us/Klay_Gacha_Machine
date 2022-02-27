@@ -5,8 +5,12 @@ import Caver from 'caver-js';
 const CACHE_PATH = './.cache/info.json';
 
 var ipfsClient = require('ipfs-http-client');
-
-const gachaAddress = ContractData.gachaAddress;
+let gachaAddress = ContractData.gachaAddress;
+if(process.env.REACT_APP_NETWORK == "baobab"){
+  gachaAddress = ContractData.gachaAddressBaobab;
+}else if(process.env.REACT_APP_NETWORK == "mainnet"){
+  gachaAddress = ContractData.gachaAddress;
+}
 const gachaABI = ContractData.gachaABI;
 const timeStmp = + new Date();
 
@@ -24,9 +28,9 @@ export default function Mint(props) {
     
   useEffect(async () => {
     const addr = process.env.REACT_APP_TREASURY_ACCOUNT;
-    const addrkey = process.env.REACT_APP_PRIVATE_KEY;
     
     if(window.klaytn){
+      console.log(window.klaytn);
       const [address] = await window.klaytn.enable();
       let ret;
       setAccount(address);

@@ -11,7 +11,7 @@ const contractBuffer = fs.readFileSync(CONTRACT_PATH);
 const contractJson = contractBuffer.toString();
 const contractData = JSON.parse(contractJson);
 
-const gachaAddress = contractData.gachaAddress;
+let gachaAddress = contractData.gachaAddress;
 const gachaABI = contractData.gachaABI;
 
 
@@ -28,12 +28,18 @@ program.command('verify')
   const configBuffer = fs.readFileSync(CONFIG_PATH);
   const configJson = configBuffer.toString();
   const configData = JSON.parse(configJson);
+  let caver;
+  let contract;
   if(options.network == 'baobab'){
     rpcURL = contractData.baobabRPCURL;
+    caver = new Caver(rpcURL);
+    gachaAddress = contractData.gachaAddressBaobab;
+    contract = await caver.contract.create(gachaABI, gachaAddress);
   }else if(options.network == 'mainnet'){
     rpcURL = contractData.mainnetRPCURL;
+    caver = new Caver(rpcURL);
+    contract = await caver.contract.create(gachaABI, gachaAddress);
   }
-  const caver = new Caver(rpcURL);
 
   const minterAddress = configData.TreasuryAccount;
   const minterPrivateKey = configData.PrivateKey;
@@ -41,7 +47,6 @@ program.command('verify')
   ret = await caver.klay.accounts.createWithAccountKey(minterAddress, minterPrivateKey);
   ret = caver.klay.accounts.wallet.add(ret);
   ret = caver.klay.accounts.wallet.getAccount(0);
-  let contract = await caver.contract.create(gachaABI, gachaAddress);
   const cacheBuffer = fs.readFileSync(CACHE_PATH);
   const cacheJSON = cacheBuffer.toString();
   const cacheData = JSON.parse(cacheJSON);
@@ -87,17 +92,24 @@ program
     console.log(options);
     let rpcURL;
     let ret;
+    let contract;
     const configBuffer = fs.readFileSync('./config.json');
     const configJson = configBuffer.toString();
     const configData = JSON.parse(configJson);
-    const imageExtension = configData.imageExtension.toString();
+    const imageExtension = configData.imageExtension;
+    let caver;
     
     if(options.network == 'baobab'){
-      rpcURL = contractData.baobabRPCURL;
+        rpcURL = contractData.baobabRPCURL;
+        caver = await new Caver(rpcURL);
+        gachaAddress = contractData.gachaAddressBaobab;
+        contract = await caver.contract.create(gachaABI, gachaAddress);
     }else if(options.network == 'mainnet'){
-      rpcURL = contractData.mainnetRPCURL;
+        rpcURL = contractData.mainnetRPCURL;
+        caver = await new Caver(rpcURL);
+        contract = await caver.contract.create(gachaABI, gachaAddress);
     }
-    const caver = new Caver(rpcURL);
+    
 
     const minterAddress = configData.TreasuryAccount;
     const minterPrivateKey = configData.PrivateKey;
@@ -129,7 +141,6 @@ program
     const totalCnt = imageFileCount;
     let cacheData = '';    
     
-    let contract = await caver.contract.create(gachaABI, gachaAddress);
       ret = await caver.klay.sendTransaction({
         type: 'SMART_CONTRACT_EXECUTION',
         from: minterAddress,

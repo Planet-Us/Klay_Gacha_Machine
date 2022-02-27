@@ -1,10 +1,10 @@
 {
-    "NumberOfNFT" : ,
+    "NumberOfNFT" : 12,
     "TokenName" : "put_your_nft_name",
-    "TokenSymbol" : "",
+    "TokenSymbol" : "TKN",
     "TreasuryAccount": "",
     "PrivateKey": "",
     "pinataApiKey":"",
     "pinataSecretApiKey": "",
-    "imageExtension": "png"
+    "imageExtension" : "png"
 }
