@@ -145,8 +145,8 @@ program
     let uriMetaForUpload = "";
     var items = new Array();
     
-    if(!fs.existsSync('.cache')){
-      fs.mkdirSync('.cache');
+    if(!fs.existsSync('./.cache')){
+      fs.mkdirSync('./.cache');
       ret = await caver.klay.sendTransaction({
         type: 'SMART_CONTRACT_EXECUTION',
         from: minterAddress,
@@ -154,7 +154,7 @@ program
         data: contract.methods.mintNewToken(tokenName, tokenSymbol).encodeABI(),
         gas: '8000000'
       }).then(console.log("New collection is successfully made."));
-    }else if(fs.existsSync('.cache/info.json')){      
+    }else if(fs.existsSync('./.cache/info.json')){      
       const cacheBuffer = fs.readFileSync(CACHE_PATH);
       const cacheJson = cacheBuffer.toString();
       const dataCache = JSON.parse(cacheJson);
