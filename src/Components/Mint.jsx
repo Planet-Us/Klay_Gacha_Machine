@@ -66,7 +66,7 @@ export default function Mint(props) {
         to: gachaAddress,
         value: caver.utils.toPeb((NFTPrice * 1).toString(), 'KLAY'),
         data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,1, account).encodeABI(),
-        gas: '2000000'
+        gas: '850000'
       });
       let mintCount = await contract.methods.getMintedCount(minterAddress).call();
       setMintCnt(mintCount);
@@ -83,7 +83,7 @@ export default function Mint(props) {
         to: gachaAddress,
         value: caver.utils.toPeb((NFTPrice * 3).toString(), 'KLAY'),
         data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,3, account).encodeABI(),
-        gas: '2000000'
+        gas: '1200000'
       });
       let mintCount = await contract.methods.getMintedCount(minterAddress).call();
       setMintCnt(mintCount);

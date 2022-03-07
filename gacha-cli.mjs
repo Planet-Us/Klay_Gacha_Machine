@@ -140,7 +140,13 @@ program
       }
     const totalCnt = imageFileCount;
     let cacheData = '';    
+    let cacheCnt = 0;
+    var uriCnt = 0;
+    let uriMetaForUpload = "";
+    var items = new Array();
     
+    if(!fs.existsSync('.cache')){
+      fs.mkdirSync('.cache');
       ret = await caver.klay.sendTransaction({
         type: 'SMART_CONTRACT_EXECUTION',
         from: minterAddress,
@@ -148,19 +154,40 @@ program
         data: contract.methods.mintNewToken(tokenName, tokenSymbol).encodeABI(),
         gas: '8000000'
       }).then(console.log("New collection is successfully made."));
-    var uriCnt = 0;
-    let uriMetaForUpload = "";
-    var items = new Array();
-    for(let i = 0;i<totalCnt;i++){     
+    }else if(fs.existsSync('.cache/info.json')){      
+      const cacheBuffer = fs.readFileSync(CACHE_PATH);
+      const cacheJson = cacheBuffer.toString();
+      const dataCache = JSON.parse(cacheJson);
+      if(dataCache.gachaMachineId != minterAddress || configData.TokenName != dataCache.tokenName){
+        throw new Error(
+          'The ./cache/info.json file is not match with minter address',
+        );
+      }
+      console.log("Start to upload from " + dataCache.items.length + "...");
+      for(let j = 0;j<dataCache.items.length;j++){
+        items.push(dataCache.items[j]); 
+      }
+      uriCnt = dataCache.items.length%10;
+      cacheCnt = dataCache.items.length;
+    }else{    
+      ret = await caver.klay.sendTransaction({
+        type: 'SMART_CONTRACT_EXECUTION',
+        from: minterAddress,
+        to: gachaAddress,
+        data: contract.methods.mintNewToken(tokenName, tokenSymbol).encodeABI(),
+        gas: '8000000'
+      }).then(console.log("New collection is successfully made."));
+    }
+    for(let i = cacheCnt;i<totalCnt;i++){     
       const metadata = dirName + '/' + i + '.json';        
       const dataBuffer = fs.readFileSync(metadata);
       const dataJson = dataBuffer.toString();
       const metadataJson = JSON.parse(dataJson);
       console.log("Number : ", i);
+      uriCnt++;
       
       if(options.ipfs){
         const image = dirName + '/' + i + '.' + imageExtension;
-        uriCnt++;
         const cidImage = await pinFileToIPFS(image);
         // Add a file to IPFS with file path
         const uriImage = "https://ipfs.io/ipfs/" + cidImage;        
@@ -172,9 +199,6 @@ program
         const uriMeta = "ipfs://" + cidMeta;         
         uriMetaForUpload = uriMetaForUpload + uriMeta;         
 
-        if(!fs.existsSync('.cache')){
-          fs.mkdirSync('.cache');
-        }
 
         items.push({
           "id" : i,
@@ -187,9 +211,10 @@ program
             if(uriCnt == 10){
                 console.log("Upload " + (i-9) + "-" + (i));
             }else{
-                console.log("Upload " + (i-totalCnt-1) + "-" + (i));
+                console.log("Upload -" + (i));
             }
           cacheData = {
+            "tokenName" : configData.TokenName,
             "gachaMachineId" : minterAddress,
             "items" : items
             }    
