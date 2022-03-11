@@ -132,11 +132,13 @@ program
       const jsonFileCount = files.filter(it => {
         return it.endsWith('.json');
       }).length;
-  
-      if (imageFileCount !== jsonFileCount) {
-        throw new Error(
-          `number of image files (${imageFileCount}) is different than the number of json files (${jsonFileCount})`,
-        );
+      
+      if(options.ipfs){
+        if (imageFileCount !== jsonFileCount) {
+          throw new Error(
+            `number of image files (${imageFileCount}) is different than the number of json files (${jsonFileCount})`,
+          );
+        }
       }
     const totalCnt = imageFileCount;
     let cacheData = '';    
@@ -152,7 +154,7 @@ program
         from: minterAddress,
         to: gachaAddress,
         data: contract.methods.mintNewToken(tokenName, tokenSymbol).encodeABI(),
-        gas: '8000000'
+        gas: '5000000'
       }).then(console.log("New collection is successfully made."));
     }else if(fs.existsSync('./.cache/info.json')){      
       const cacheBuffer = fs.readFileSync(CACHE_PATH);
@@ -175,7 +177,7 @@ program
         from: minterAddress,
         to: gachaAddress,
         data: contract.methods.mintNewToken(tokenName, tokenSymbol).encodeABI(),
-        gas: '8000000'
+        gas: '5000000'
       }).then(console.log("New collection is successfully made."));
     }
     for(let i = cacheCnt;i<totalCnt;i++){     
