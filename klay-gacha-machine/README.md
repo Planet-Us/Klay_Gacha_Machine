@@ -1,2 +1,0 @@
-# Klay-Gacha-Machine
-
