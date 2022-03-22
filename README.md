@@ -100,4 +100,5 @@ REACT_APP_WHITELIST=false //화이트리스트 사용 여부
 
 # Mint UI 테스트
 .env파일의 설정이 끝나면, 다음과 같은 명령어를 통해 Mint UI를 로컬 환경에서 테스트해볼 수 있습니다.
-npm start
+
+`npm start`
