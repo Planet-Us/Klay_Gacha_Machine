@@ -1,0 +1,7 @@
+{
+    "startTokenId" : "0",
+    "items" : [
+        {"address":"0xaddress입력","tokenNum":"갯수"},
+        {"address":"0xb4bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","tokenNum":"1"}
+    ]
+}

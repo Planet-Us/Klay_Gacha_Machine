@@ -1,7 +1,6 @@
 {
-    
-    "gachaAddressBaobab" : "0xA293459A784D083a4d306Ff2F741722564aCb843",
-    "gachaAddress" : "0x2B1859268e8a2cc6527cb859Fa58223ab3176b2F",
+    "gachaAddressBaobab" : "0xBF4Cc98d8D5CA2561ae3Db9FA895ED426747802d",
+    "gachaAddress" : "0xF38443AeD36E250B4Cbd55eAFf8e41F8F45e3a7A",
     "gachaABI" : [
 		{
 			"constant": false,
@@ -28,6 +27,25 @@
 			],
 			"payable": false,
 			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "minter",
+					"type": "address"
+				}
+			],
+			"name": "getOwnerAddr",
+			"outputs": [
+				{
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
 			"type": "function"
 		},
 		{
@@ -201,6 +219,24 @@
 					"type": "bool"
 				}
 			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"name": "_tokenNum",
+					"type": "uint256"
+				},
+				{
+					"name": "minterAddress",
+					"type": "address"
+				}
+			],
+			"name": "burnToken",
+			"outputs": [],
 			"payable": false,
 			"stateMutability": "nonpayable",
 			"type": "function"

@@ -1,10 +1,14 @@
 {
-    "NumberOfNFT" : 100,
-    "TokenName" : "",
-    "TokenSymbol" : "",
+    "NumberOfNFT" : 12,
+    "TokenName" : "myNFT",
+    "TokenSymbol" : "MNT",
     "TreasuryAccount": "",
     "PrivateKey": "",
     "pinataApiKey":"",
     "pinataSecretApiKey": "",
-    "imageExtension" : "png"
+    "imageExtension" : "png",
+    "awsRegion" : "ap-northeast-2",
+    "awsBucketName": "",
+    "awsAccessKey" : "",
+    "awsSecretKey" : ""
 }
