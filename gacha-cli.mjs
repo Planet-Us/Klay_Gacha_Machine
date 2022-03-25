@@ -149,7 +149,7 @@ program
           );
         }
       }
-    const totalCnt = imageFileCount;
+    const totalCnt = configData.NumberOfNFT;
     console.log("total", totalCnt);
     let cacheData = '';    
     let cacheCnt = 0;
