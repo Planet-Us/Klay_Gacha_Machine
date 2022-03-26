@@ -145,7 +145,7 @@ program
       if(options.ipfs || options.aws){
         if (imageFileCount !== jsonFileCount) {
           throw new Error(
-            `number of image files (${imageFileCount}) is different than the number of json files (${jsonFileCount})`,
+            `number of image files (${imageFileCount}) is different than the number of json files (${jsonFileCount}). 이미지 파일과 json 파일의 숫자가 다릅니다.`,
           );
         }
       }
@@ -172,15 +172,80 @@ program
       const cacheBuffer = fs.readFileSync(CACHE_PATH);
       const cacheJson = cacheBuffer.toString();
       const dataCache = JSON.parse(cacheJson);
+      nftContract = dataCache.NFTContract;
       if(dataCache.gachaMachineId != minterAddress || configData.TokenName != dataCache.tokenName){
         throw new Error(
-          'The ./cache/info.json file is not match with minter address',
+          'The ./cache/info.json file is not match with minter address. ./cache/info.json 파일을 확인하시고, 필요하지 않다면 해당 파일을 삭제해주세요.',
         );
       }
-      console.log("Start to upload from " + dataCache.items.length + "...");
       for(let j = 0;j<dataCache.items.length;j++){
-        items.push(dataCache.items[j]); 
+        if(dataCache.items[j].onChain == "false"){   
+          const metadata = dirName + '/' + j + '.json';        
+          const dataBuffer = fs.readFileSync(metadata);
+          const dataJson = dataBuffer.toString();
+          const metadataJson = JSON.parse(dataJson);
+          console.log("Number : " + j + " upload again...");
+                
+          let cidMeta; 
+          let uriMeta;          
+          let uriLength;
+          if(options.aws){            
+            cidMeta = await awsUpload(metadata, "json"); 
+            uriMeta = cidMeta;          
+          }else if(options.ipfs){            
+            cidMeta = await pinFileToIPFS(metadata); 
+            uriMeta = "ipfs://" + cidMeta;      
+          }else{
+            if(configData.pinataApiKey.length > 0){         
+              cidMeta = await pinFileToIPFS(metadata); 
+              uriMeta = "ipfs://" + cidMeta;       
+            }else if(configData.awsAccessKey.length > 0){
+              cidMeta = await awsUpload(metadata, "json"); 
+              uriMeta = cidMeta;         
+            }
+          }   
+          
+          ret = await caver.klay.sendTransaction({
+            type: 'SMART_CONTRACT_EXECUTION',
+            from: minterAddress,
+            to: gachaAddress,
+            data: contract.methods.upload(totalCnt, j, uriMeta).encodeABI(),
+            gas: '1000000'
+          });
+          
+          ret = await contract.methods.getUploaded(minterAddress,j, uriMeta).call();
+          if(ret.toString() == "true"){
+            console.log("Uploaded number " + j + ": on chain");          
+            items.push({
+              "id" : j,
+              "link" : uriMeta,
+              "name" : metadataJson.name,
+              "onChain" : "true"
+            });   
+          }else{      
+            console.log("Uploaded number " + j + ": is still not on chain");   
+            items.push({
+              "id" : j,
+              "link" : uriMeta,
+              "name" : metadataJson.name,
+              "onChain" : "false"
+            });   
+
+          }
+        }else{
+          items.push(dataCache.items[j]); 
+        }
       }
+      
+      cacheData = {
+        "tokenName" : configData.TokenName,
+        "gachaMachineId" : minterAddress,
+        "items" : items,
+        "NFTContract" : nftContract
+        }    
+      fs.writeFileSync(CACHE_PATH, JSON.stringify(cacheData));
+
+      console.log("Start to upload from " + dataCache.items.length + "...");
       uriCnt = dataCache.items.length%10;
       cacheCnt = dataCache.items.length;
     }else{    

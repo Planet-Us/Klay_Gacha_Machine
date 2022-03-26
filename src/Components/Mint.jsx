@@ -190,7 +190,7 @@ const bull = (
 );
     
   return (
-    <div style={{display: 'flex', justifyContent: 'center'}}>
+    <div style={{display: 'flex', marginTop: '10%',justifyContent: 'center'}}>
       <Box  sx={{ width: '20%', background: '#000010', color: '#FFFFFF', borderRadius:'8px', minWidth:'270px'}}>
       <Stack spacing={1}>
         <div>Remaining {mintCnt}/{process.env.REACT_APP_NUMBER_OF_NFT}</div>
