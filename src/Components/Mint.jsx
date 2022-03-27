@@ -31,10 +31,6 @@ export default function Mint(props) {
     let NFTPrice = process.env.REACT_APP_NFT_PRICE.toString();
     let whiteList;
     
-window.klaytn.on('accountsChanged', async (accounts) => {
-  setAccount(window.klaytn.selectedAddress);
-  whiteListCheck();
-})
   const whiteListCheck = async () =>{
     if(process.env.REACT_APP_WHITELIST == "true"){
       let ret = await axios.get(WLData.whiteList)
@@ -69,10 +65,15 @@ window.klaytn.on('accountsChanged', async (accounts) => {
       setWalletConnection(true);
       setAccount(address);
       setMinterAddress(addr);
-      whiteListCheck();
+      whiteListCheck();  
       
-
-    }    
+      window.klaytn.on('accountsChanged', async (accounts) => {
+        setAccount(window.klaytn.selectedAddress);
+        whiteListCheck();
+      })    
+    }else{
+      alert("현재 사용할 수 있는 클레이튼 지갑이 없습니다. 지갑을 설치하신 후 이용바랍니다.");
+    }
   },[]); 
   
   useEffect(async () => {    
