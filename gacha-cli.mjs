@@ -43,6 +43,10 @@ program.command('verify')
     rpcURL = contractData.mainnetRPCURL;
     caver = new Caver(rpcURL);
     contract = await caver.contract.create(gachaABI, gachaAddress);
+  }else{
+    throw new Error(
+      'The Network name is wrong. 네트워크명은 baobab이나 mainnet으로 입력 바랍니다.',
+    );
   }
 
   const minterAddress = configData.TreasuryAccount;
@@ -117,6 +121,10 @@ program
         rpcURL = contractData.mainnetRPCURL;
         caver = await new Caver(rpcURL);
         contract = await caver.contract.create(gachaABI, gachaAddress);
+    }else{
+      throw new Error(
+        'The Network name is wrong. 네트워크명은 baobab이나 mainnet으로 입력 바랍니다.',
+      );
     }
     
 
@@ -394,6 +402,10 @@ program
         rpcURL = contractData.mainnetRPCURL;
         caver = await new Caver(rpcURL);
         contract = await caver.contract.create(gachaABI, gachaAddress);
+    }else{
+      throw new Error(
+        'The Network name is wrong. 네트워크명은 baobab이나 mainnet으로 입력 바랍니다.',
+      );
     }
     
 
@@ -450,6 +462,10 @@ program
     }else if(options.network == 'mainnet'){
         rpcURL = contractData.mainnetRPCURL;
         caver = await new Caver(rpcURL);
+    }else{
+      throw new Error(
+        'The Network name is wrong. 네트워크명은 baobab이나 mainnet으로 입력 바랍니다.',
+      );
     }
 
     const minterAddress = configData.TreasuryAccount;
