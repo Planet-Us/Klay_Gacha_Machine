@@ -1,6 +1,6 @@
 {
-    "NumberOfNFT" : 100,
-    "TokenName" : "testNFT",
+    "NumberOfNFT" : 12,
+    "TokenName" : "myNFT",
     "TokenSymbol" : "MNT",
     "TreasuryAccount": "",
     "PrivateKey": "",

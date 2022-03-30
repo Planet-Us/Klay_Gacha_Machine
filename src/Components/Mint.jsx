@@ -17,6 +17,7 @@ if(process.env.REACT_APP_NETWORK == "baobab"){
 const gachaABI = ContractData.gachaABI;
 const timeStmp = + new Date();
 let WLFlag = 0;
+let limit = new Array();
 
 
 export default function Mint(props) {
@@ -31,7 +32,7 @@ export default function Mint(props) {
     let NFTPrice = process.env.REACT_APP_NFT_PRICE.toString();
     let whiteList;
     
-  const whiteListCheck = async () =>{
+  const whiteListCheck = async (init) =>{
     if(process.env.REACT_APP_WHITELIST == "true"){
       let ret = await axios.get(WLData.whiteList)
       .then(async (Response) => {
@@ -54,6 +55,50 @@ export default function Mint(props) {
       setMintLive(false);
     }
   }
+  const maxPurchaseCheck = async (cnt) =>{
+    let limitFlag = 0;
+    if(localStorage.getItem("limitPurchase")){
+      limit = JSON.parse(localStorage.getItem("limitPurchase"));
+    }
+    console.log(limit);
+    for(let i=0;i<limit.length;i++){
+      if(limit[i].address.toUpperCase == account.toUpperCase){
+        // console.log("lim Add : ", limit[i].address);
+        // console.log("lim Num : ", limit[i].number);
+        limitFlag = 1;
+        if(limit[i].number + cnt >= process.env.REACT_APP_PURCHASE_LIMIT){
+          alert("지갑당 구매한도를 넘었습니다.");
+          return false;
+        }else{
+          return true;
+        }
+      }
+    }
+    if(limitFlag == 0){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  const maxPurchaseCnt = async (cnt) =>{
+    let limitFlag = 0;
+    for(let i=0;i<limit.length;i++){
+      if(limit[i].address == account){
+        // console.log("lim Add : ", limit[i].address);
+        // console.log("lim Num : ", limit[i].number);
+        limitFlag = 1;
+        limit[i].number = limit[i].number + cnt;
+      }
+    }
+    if(limitFlag == 0){
+      limit.push({
+        "address" : account,
+        "number" : cnt
+      });
+      console.log(limit);
+    }
+    localStorage.setItem("limitPurchase", JSON.stringify(limit));
+  }
     
   useEffect(async () => {
     let ret;
@@ -65,11 +110,11 @@ export default function Mint(props) {
       setWalletConnection(true);
       setAccount(address);
       setMinterAddress(addr);
-      whiteListCheck();  
+      whiteListCheck(0);  
       
       window.klaytn.on('accountsChanged', async (accounts) => {
         setAccount(window.klaytn.selectedAddress);
-        whiteListCheck();
+        whiteListCheck(1);
       })    
     }else{
       alert("현재 사용할 수 있는 클레이튼 지갑이 없습니다. 지갑을 설치하신 후 이용바랍니다.");
@@ -79,7 +124,8 @@ export default function Mint(props) {
   useEffect(async () => {    
     if(account.length > 0){
       let mintCount = await contract.methods.getMintedCount(minterAddress).call();
-      console.log("count", mintCount);
+      console.log(localStorage);
+      whiteListCheck(0);
       setMintCnt(mintCount);
     }
   },[minterAddress]);
@@ -89,7 +135,7 @@ export default function Mint(props) {
       setMintCnt(mintCount);
     }
     let ret;
-    whiteListCheck();
+    whiteListCheck(1);
     let liveDate = new Date(process.env.REACT_APP_LIVE_DATE).getTime();
     if(timeStmp > liveDate){
       setMintLive(false);
@@ -113,73 +159,45 @@ export default function Mint(props) {
     }
   }
 
-  const mintNFT1 = async () => {
+  const mintNFT = async (cnt) => {
     let ret;    
-    whiteListCheck();
+    whiteListCheck(1);
+    let gaslimit = cnt * 850000;
     if(process.env.REACT_APP_WHITELIST == "true" && WLFlag != 1){
       alert("해당 주소는 민팅 대상 화이트리스트에 포함되어있지 않습니다.");
     }else{
-      ret = await caver.klay.sendTransaction({
-          type: 'SMART_CONTRACT_EXECUTION',
-          from: account,
-          to: gachaAddress,
-          value: caver.utils.toPeb((NFTPrice * 1).toString(), 'KLAY'),
-          data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,1, account).encodeABI(),
-          gas: '850000'
-        }).then((res)=>{console.log(res);})
-        .catch((err) => {alert("Mint has failed.");});
+      let limitRet = await maxPurchaseCheck(cnt);
+      if(limitRet && process.env.REACT_APP_WHITELIST == "true" && parseInt(process.env.REACT_APP_PURCHASE_LIMIT) > 0){   
+        console.log("true!");   
+        ret = await caver.klay.sendTransaction({
+            type: 'SMART_CONTRACT_EXECUTION',
+            from: account,
+            to: gachaAddress,
+            value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
+            data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+            gas: gaslimit
+          }).then(async (res)=>{
+            console.log(res);
+            let maxRet = await maxPurchaseCnt(cnt);
+          })
+          .catch((err) => {alert("Mint has failed.");});        
+      }else if(process.env.REACT_APP_WHITELIST == "false"){
+        ret = await caver.klay.sendTransaction({
+            type: 'SMART_CONTRACT_EXECUTION',
+            from: account,
+            to: gachaAddress,
+            value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
+            data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+            gas: gaslimit
+          }).then((res)=>{console.log(res);})
+          .catch((err) => {alert("Mint has failed.");});
+      }
         let mintCount = await contract.methods.getMintedCount(minterAddress).call();
         setMintCnt(mintCount);
       
         await wait(3000);
     }
     
-  }
-
-  const mintNFT3 = async () => {
-    setNftCount(3);
-    whiteListCheck();
-    let ret;
-    if(process.env.REACT_APP_WHITELIST == "true" && WLFlag != 1){
-      alert("해당 주소는 민팅 대상 화이트리스트에 포함되어있지 않습니다.");
-    }else{
-    
-      ret = await caver.klay.sendTransaction({
-          type: 'SMART_CONTRACT_EXECUTION',
-          from: account,
-          to: gachaAddress,
-          value: caver.utils.toPeb((NFTPrice * 3).toString(), 'KLAY'),
-          data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,3, account).encodeABI(),
-          gas: '1200000'
-        }).then((res)=>{console.log(res);})
-        .catch((err) => {alert("Mint has failed.");});
-        let mintCount = await contract.methods.getMintedCount(minterAddress).call();
-        setMintCnt(mintCount);
-
-      await wait(3000);
-    }
-  }
-  const mintNFT5 = async () => {
-    setNftCount(5);
-    whiteListCheck();
-    let ret;
-    if(process.env.REACT_APP_WHITELIST == "true" && WLFlag != 1){
-      alert("해당 주소는 민팅 대상 화이트리스트에 포함되어있지 않습니다.");
-    }else{    
-      ret = await caver.klay.sendTransaction({
-          type: 'SMART_CONTRACT_EXECUTION',
-          from: account,
-          to: gachaAddress,
-          value: caver.utils.toPeb((NFTPrice * 5).toString(), 'KLAY'),
-          data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,5, account).encodeABI(),
-          gas: '2000000'
-        }).then((res)=>{console.log(res);})
-        .catch((err) => {alert("Mint has failed.");});
-        let mintCount = await contract.methods.getMintedCount(minterAddress).call();
-        setMintCnt(mintCount);
-
-      await wait(3000);
-    }
   }
   
 const bull = (
@@ -197,9 +215,9 @@ const bull = (
         <div>Remaining {mintCnt}/{process.env.REACT_APP_NUMBER_OF_NFT}</div>
         <div>Price : {process.env.REACT_APP_NFT_PRICE} Klay</div>
         <Button variant="contained" style={{margin:'5px', background: '#4f473e', color: 'white'}} disabled={walletConnection} onClick={connectWallet}>{walletConnection ? (account.toString().slice(0,7) + "...") : "Wallet Connect"}</Button>
-        <Button variant="contained" style={{margin:'5px'}} disabled={mintLive} onClick={mintNFT1}>Mint 1 NFT</Button>
-        <Button variant="contained" style={{margin:'5px'}} disabled={mintLive} onClick={mintNFT3}>Mint 3 NFT</Button>
-        <Button variant="contained" style={{margin:'5px'}} disabled={mintLive} onClick={mintNFT5}>Mint 5 NFT</Button>
+        <Button variant="contained" style={{margin:'5px'}} disabled={mintLive} onClick={(cnt) => mintNFT(1)}>Mint 1 NFT</Button>
+        <Button variant="contained" style={{margin:'5px'}} disabled={mintLive} onClick={(cnt) => mintNFT(3)}>Mint 3 NFT</Button>
+        <Button variant="contained" style={{margin:'5px'}} disabled={mintLive} onClick={(cnt) => mintNFT(5)}>Mint 5 NFT</Button>
         <div style={{fontSize: '10px', margin: '5px'}}>Powered by Klay-Gacha-Machine</div>
       </Stack>
       </Box>
