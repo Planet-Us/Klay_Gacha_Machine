@@ -1,6 +1,6 @@
 {
-    "gachaAddressBaobab" : "0xBF4Cc98d8D5CA2561ae3Db9FA895ED426747802d",
-    "gachaAddress" : "0xF38443AeD36E250B4Cbd55eAFf8e41F8F45e3a7A",
+    "gachaAddressBaobab" : "0x7736D1Fb67885cd4a0e637c7e40bE60a34493d83",
+    "gachaAddress" : "0xA3CeDE212d86D3E673F08641c4228c672aba4042",
     "gachaABI" : [
 		{
 			"constant": false,

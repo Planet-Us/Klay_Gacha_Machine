@@ -254,7 +254,7 @@ program
       fs.writeFileSync(CACHE_PATH, JSON.stringify(cacheData));
 
       console.log("Start to upload from " + dataCache.items.length + "...");
-      uriCnt = dataCache.items.length%10;
+      uriCnt = 0;
       cacheCnt = dataCache.items.length;
     }else{    
       ret = await caver.klay.sendTransaction({
@@ -322,11 +322,12 @@ program
           "onChain" : "false"
         });   
           
-        if(uriCnt == 10 || i == (totalCnt-1)){
+        if(((i+1)%10) == 0 || i == (totalCnt-1)){
+          console.log(uriMetaForUpload);
             if(uriCnt == 10){
                 console.log("Upload " + (i-9) + "-" + (i));
             }else{
-                console.log("Upload -" + (i));
+                console.log("Upload ~ " + (i));
             }
           cacheData = {
             "tokenName" : configData.TokenName,
@@ -334,6 +335,8 @@ program
             "items" : items,
             "NFTContract" : nftContract
             }    
+            console.log(uriCnt);
+            console.log(i);
           ret = await caver.klay.sendTransaction({
             type: 'SMART_CONTRACT_EXECUTION',
             from: minterAddress,

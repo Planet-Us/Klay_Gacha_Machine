@@ -6,9 +6,9 @@
     "PrivateKey": "",
     "pinataApiKey":"",
     "pinataSecretApiKey": "",
-    "imageExtension" : "jpeg",
+    "imageExtension" : "png",
     "awsRegion" : "ap-northeast-2",
-    "awsBucketName": "",
+    "awsBucketName": "gacha-test",
     "awsAccessKey" : "",
     "awsSecretKey" : ""
 }
