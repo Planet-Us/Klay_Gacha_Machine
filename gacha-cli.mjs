@@ -323,7 +323,6 @@ program
         });   
           
         if(((i+1)%10) == 0 || i == (totalCnt-1)){
-          console.log(uriMetaForUpload);
             if(uriCnt == 10){
                 console.log("Upload " + (i-9) + "-" + (i));
             }else{
@@ -335,8 +334,6 @@ program
             "items" : items,
             "NFTContract" : nftContract
             }    
-            console.log(uriCnt);
-            console.log(i);
           ret = await caver.klay.sendTransaction({
             type: 'SMART_CONTRACT_EXECUTION',
             from: minterAddress,
@@ -366,10 +363,6 @@ program
   const WLHash = await caver.ipfs.add(WHITELIST_PATH);
   console.log(WLHash);
   const WL_json = JSON.parse('{"whiteList" : "https://ipfs.io/ipfs/' + WLHash + '"}');
-
-  if(!fs.existsSync('.cache')){
-    fs.mkdirSync('.cache');
-  }
     
   fs.writeFileSync(WL_CACHE, JSON.stringify(WL_json));      
 });
