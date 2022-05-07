@@ -69,6 +69,7 @@ program.command('verify')
         cacheData.items[i].onChain = "false";
         flag = false;
     }
+    ret = await wait(1500);
   }  
   if(!flag){
       console.log("Some of uploaded are NOT on chain. Please upload again.");
@@ -388,6 +389,7 @@ program
     const configData = JSON.parse(configJson);
     const imageExtension = configData.imageExtension;
     let caver;
+    let gaslimit = mintNum * 850000;
     
     if(options.network == 'baobab'){
         rpcURL = contractData.baobabRPCURL;
@@ -419,8 +421,8 @@ program
       from: minterAddress,
       to: gachaAddress,
       value: caver.utils.toPeb((0.11 * mintNum).toString(), 'KLAY'),
-      data: contract.methods.mint(mintCount, minterAddress,mintNum, minterAddress).encodeABI(),
-      gas: '3000000'
+      data: contract.methods.mint(minterAddress,mintNum, minterAddress).encodeABI(),
+      gas: gaslimit
     }).then(async (res)=>{
       console.log("Mint has succeded");
       mintCount = await contract.methods.getMintedCount(minterAddress).call();

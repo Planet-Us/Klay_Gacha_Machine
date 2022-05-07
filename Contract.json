@@ -1,47 +1,28 @@
 {
-    "gachaAddressBaobab" : "0x7736D1Fb67885cd4a0e637c7e40bE60a34493d83",
+    "gachaAddressBaobab" : "0xF3fe5c605988443a5794D0750160a159c3B58FBf",
     "gachaAddress" : "0xA3CeDE212d86D3E673F08641c4228c672aba4042",
     "gachaABI" : [
 		{
-			"constant": false,
-			"inputs": [
-				{
-					"name": "_maxCnt",
-					"type": "uint256"
-				},
-				{
-					"name": "cnt",
-					"type": "uint256"
-				},
-				{
-					"name": "_tokenURI",
-					"type": "string"
-				}
-			],
-			"name": "upload",
-			"outputs": [
-				{
-					"name": "",
-					"type": "bool"
-				}
-			],
+			"inputs": [],
 			"payable": false,
 			"stateMutability": "nonpayable",
-			"type": "function"
+			"type": "constructor"
 		},
 		{
 			"constant": true,
 			"inputs": [
 				{
-					"name": "minter",
+					"internalType": "address",
+					"name": "minterAddress",
 					"type": "address"
 				}
 			],
-			"name": "getOwnerAddr",
+			"name": "getMintedCount",
 			"outputs": [
 				{
+					"internalType": "uint256",
 					"name": "",
-					"type": "address"
+					"type": "uint256"
 				}
 			],
 			"payable": false,
@@ -52,6 +33,7 @@
 			"constant": true,
 			"inputs": [
 				{
+					"internalType": "uint256",
 					"name": "cnt",
 					"type": "uint256"
 				}
@@ -59,6 +41,7 @@
 			"name": "getTokenURI",
 			"outputs": [
 				{
+					"internalType": "string",
 					"name": "",
 					"type": "string"
 				}
@@ -71,14 +54,17 @@
 			"constant": true,
 			"inputs": [
 				{
+					"internalType": "address",
 					"name": "minterAddress",
 					"type": "address"
 				},
 				{
+					"internalType": "uint256",
 					"name": "cnt",
 					"type": "uint256"
 				},
 				{
+					"internalType": "string",
 					"name": "_tokenURI",
 					"type": "string"
 				}
@@ -86,6 +72,7 @@
 			"name": "getUploaded",
 			"outputs": [
 				{
+					"internalType": "bool",
 					"name": "",
 					"type": "bool"
 				}
@@ -100,67 +87,7 @@
 			"name": "isMintExist",
 			"outputs": [
 				{
-					"name": "",
-					"type": "address"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [
-				{
-					"name": "minterAddress",
-					"type": "address"
-				}
-			],
-			"name": "getMintedCount",
-			"outputs": [
-				{
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [
-				{
-					"name": "",
-					"type": "address"
-				}
-			],
-			"name": "nftManager",
-			"outputs": [
-				{
-					"name": "",
-					"type": "address"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [
-				{
-					"name": "minter",
-					"type": "address"
-				},
-				{
-					"name": "tokenNum",
-					"type": "uint256"
-				}
-			],
-			"name": "getAppr",
-			"outputs": [
-				{
+					"internalType": "address",
 					"name": "",
 					"type": "address"
 				}
@@ -173,10 +100,37 @@
 			"constant": false,
 			"inputs": [
 				{
+					"internalType": "address payable",
+					"name": "minterAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "mintNum",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "mintee",
+					"type": "address"
+				}
+			],
+			"name": "mint",
+			"outputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "string",
 					"name": "_name",
 					"type": "string"
 				},
 				{
+					"internalType": "string",
 					"name": "_symbol",
 					"type": "string"
 				}
@@ -184,6 +138,7 @@
 			"name": "mintNewToken",
 			"outputs": [
 				{
+					"internalType": "address",
 					"name": "",
 					"type": "address"
 				}
@@ -193,28 +148,49 @@
 			"type": "function"
 		},
 		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"name": "nftManager",
+			"outputs": [
+				{
+					"internalType": "contract NFTMinter",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
 			"constant": false,
 			"inputs": [
 				{
+					"internalType": "uint256",
 					"name": "_maxCnt",
 					"type": "uint256"
 				},
 				{
+					"internalType": "uint256",
 					"name": "cnt",
 					"type": "uint256"
 				},
 				{
+					"internalType": "string",
 					"name": "_tokenURI",
 					"type": "string"
-				},
-				{
-					"name": "uploadCnt",
-					"type": "uint256"
 				}
 			],
-			"name": "uploadBulk",
+			"name": "upload",
 			"outputs": [
 				{
+					"internalType": "bool",
 					"name": "",
 					"type": "bool"
 				}
@@ -227,51 +203,37 @@
 			"constant": false,
 			"inputs": [
 				{
-					"name": "_tokenNum",
+					"internalType": "uint256",
+					"name": "_maxCnt",
 					"type": "uint256"
 				},
 				{
-					"name": "minterAddress",
-					"type": "address"
+					"internalType": "uint256",
+					"name": "cnt",
+					"type": "uint256"
+				},
+				{
+					"internalType": "string",
+					"name": "_tokenURI",
+					"type": "string"
+				},
+				{
+					"internalType": "uint256",
+					"name": "uploadCnt",
+					"type": "uint256"
 				}
 			],
-			"name": "burnToken",
-			"outputs": [],
+			"name": "uploadBulk",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
 			"payable": false,
 			"stateMutability": "nonpayable",
 			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [
-				{
-					"name": "_tokenNum",
-					"type": "uint256"
-				},
-				{
-					"name": "minterAddress",
-					"type": "address"
-				},
-				{
-					"name": "mintNum",
-					"type": "uint256"
-				},
-				{
-					"name": "mintee",
-					"type": "address"
-				}
-			],
-			"name": "mint",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"payable": false,
-			"stateMutability": "nonpayable",
-			"type": "constructor"
 		}
 	],
     "baobabRPCURL" : "https://api.baobab.klaytn.net:8651/",
