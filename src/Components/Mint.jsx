@@ -163,6 +163,7 @@ export default function Mint(props) {
     let ret;    
     whiteListCheck(1);
     let gaslimit = cnt * 850000;
+    // console.log(mintCnt);
     if(process.env.REACT_APP_WHITELIST == "true" && WLFlag != 1){
       alert("해당 주소는 민팅 대상 화이트리스트에 포함되어있지 않습니다.");
     }else{
@@ -174,7 +175,7 @@ export default function Mint(props) {
               from: account,
               to: gachaAddress,
               value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
-              data: contract.methods.mint( process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+              data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
               gas: gaslimit
             }).then(async (res)=>{
               console.log(res);
@@ -188,7 +189,7 @@ export default function Mint(props) {
             from: account,
             to: gachaAddress,
             value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
-            data: contract.methods.mint( process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+            data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
             gas: gaslimit
           }).then(async (res)=>{
             console.log(res);
@@ -200,7 +201,7 @@ export default function Mint(props) {
             from: account,
             to: gachaAddress,
             value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
-            data: contract.methods.mint( process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+            data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
             gas: gaslimit
           }).then((res)=>{console.log(res);})
           .catch((err) => {alert("Mint has failed.");});

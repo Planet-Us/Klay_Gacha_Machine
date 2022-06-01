@@ -100,6 +100,11 @@
 			"constant": false,
 			"inputs": [
 				{
+					"internalType": "uint256",
+					"name": "_tokenNum",
+					"type": "uint256"
+				},
+				{
 					"internalType": "address payable",
 					"name": "minterAddress",
 					"type": "address"
