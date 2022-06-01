@@ -9,12 +9,14 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 
 let gachaAddress = ContractData.gachaAddress;
+let gachaABI = ContractData.gachaABI;
 if(process.env.REACT_APP_NETWORK == "baobab"){
+  gachaABI = ContractData.gachaABIBaobab;
   gachaAddress = ContractData.gachaAddressBaobab;
 }else if(process.env.REACT_APP_NETWORK == "mainnet"){
+  gachaABI = ContractData.gachaABI;
   gachaAddress = ContractData.gachaAddress;
 }
-const gachaABI = ContractData.gachaABI;
 const timeStmp = + new Date();
 let WLFlag = 0;
 let limit = new Array();
@@ -163,13 +165,28 @@ export default function Mint(props) {
     let ret;    
     whiteListCheck(1);
     let gaslimit = cnt * 850000;
-    // console.log(mintCnt);
-    if(process.env.REACT_APP_WHITELIST == "true" && WLFlag != 1){
-      alert("해당 주소는 민팅 대상 화이트리스트에 포함되어있지 않습니다.");
-    }else{
-      if(process.env.REACT_APP_WHITELIST == "true" && parseInt(process.env.REACT_APP_PURCHASE_LIMIT) > 0){  
-        let limitRet = await maxPurchaseCheck(cnt); 
-        if(limitRet == true){
+    if(process.env.REACT_APP_NETWORK == "mainnet"){
+      // console.log(mintCnt);
+      if(process.env.REACT_APP_WHITELIST == "true" && WLFlag != 1){
+        alert("해당 주소는 민팅 대상 화이트리스트에 포함되어있지 않습니다.");
+      }else{
+        if(process.env.REACT_APP_WHITELIST == "true" && parseInt(process.env.REACT_APP_PURCHASE_LIMIT) > 0){  
+          let limitRet = await maxPurchaseCheck(cnt); 
+          if(limitRet == true){
+            ret = await caver.klay.sendTransaction({
+                type: 'SMART_CONTRACT_EXECUTION',
+                from: account,
+                to: gachaAddress,
+                value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
+                data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+                gas: gaslimit
+              }).then(async (res)=>{
+                console.log(res);
+                let maxRet = await maxPurchaseCnt(cnt);
+              })
+              .catch((err) => {alert("Mint has failed.");});  
+          }      
+        }else if(process.env.REACT_APP_WHITELIST == "true" && parseInt(process.env.REACT_APP_PURCHASE_LIMIT) == 0){ 
           ret = await caver.klay.sendTransaction({
               type: 'SMART_CONTRACT_EXECUTION',
               from: account,
@@ -179,37 +196,75 @@ export default function Mint(props) {
               gas: gaslimit
             }).then(async (res)=>{
               console.log(res);
-              let maxRet = await maxPurchaseCnt(cnt);
             })
-            .catch((err) => {alert("Mint has failed.");});  
-        }      
-      }else if(process.env.REACT_APP_WHITELIST == "true" && parseInt(process.env.REACT_APP_PURCHASE_LIMIT) == 0){ 
-        ret = await caver.klay.sendTransaction({
-            type: 'SMART_CONTRACT_EXECUTION',
-            from: account,
-            to: gachaAddress,
-            value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
-            data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
-            gas: gaslimit
-          }).then(async (res)=>{
-            console.log(res);
-          })
-          .catch((err) => {alert("Mint has failed.");});
-      }else if(process.env.REACT_APP_WHITELIST == "false"){
-        ret = await caver.klay.sendTransaction({
-            type: 'SMART_CONTRACT_EXECUTION',
-            from: account,
-            to: gachaAddress,
-            value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
-            data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
-            gas: gaslimit
-          }).then((res)=>{console.log(res);})
-          .catch((err) => {alert("Mint has failed.");});
+            .catch((err) => {alert("Mint has failed.");});
+        }else if(process.env.REACT_APP_WHITELIST == "false"){
+          ret = await caver.klay.sendTransaction({
+              type: 'SMART_CONTRACT_EXECUTION',
+              from: account,
+              to: gachaAddress,
+              value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
+              data: contract.methods.mint(mintCnt, process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+              gas: gaslimit
+            }).then((res)=>{console.log(res);})
+            .catch((err) => {alert("Mint has failed.");});
+        }
+          let mintCount = await contract.methods.getMintedCount(minterAddress).call();
+          setMintCnt(mintCount);
+        
+          await wait(3000);
       }
-        let mintCount = await contract.methods.getMintedCount(minterAddress).call();
-        setMintCnt(mintCount);
-      
-        await wait(3000);
+    }
+    else if(process.env.REACT_APP_NETWORK == "baobab"){
+      // console.log(mintCnt);
+      if(process.env.REACT_APP_WHITELIST == "true" && WLFlag != 1){
+        alert("해당 주소는 민팅 대상 화이트리스트에 포함되어있지 않습니다.");
+      }else{
+        if(process.env.REACT_APP_WHITELIST == "true" && parseInt(process.env.REACT_APP_PURCHASE_LIMIT) > 0){  
+          let limitRet = await maxPurchaseCheck(cnt); 
+          if(limitRet == true){
+            ret = await caver.klay.sendTransaction({
+                type: 'SMART_CONTRACT_EXECUTION',
+                from: account,
+                to: gachaAddress,
+                value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
+                data: contract.methods.mint(process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+                gas: gaslimit
+              }).then(async (res)=>{
+                console.log(res);
+                let maxRet = await maxPurchaseCnt(cnt);
+              })
+              .catch((err) => {alert("Mint has failed.");});  
+          }      
+        }else if(process.env.REACT_APP_WHITELIST == "true" && parseInt(process.env.REACT_APP_PURCHASE_LIMIT) == 0){ 
+          ret = await caver.klay.sendTransaction({
+              type: 'SMART_CONTRACT_EXECUTION',
+              from: account,
+              to: gachaAddress,
+              value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
+              data: contract.methods.mint(process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+              gas: gaslimit
+            }).then(async (res)=>{
+              console.log(res);
+            })
+            .catch((err) => {alert("Mint has failed.");});
+        }else if(process.env.REACT_APP_WHITELIST == "false"){
+          ret = await caver.klay.sendTransaction({
+              type: 'SMART_CONTRACT_EXECUTION',
+              from: account,
+              to: gachaAddress,
+              value: caver.utils.toPeb((NFTPrice * cnt).toString(), 'KLAY'),
+              data: contract.methods.mint(process.env.REACT_APP_TREASURY_ACCOUNT,cnt, account).encodeABI(),
+              gas: gaslimit
+            }).then((res)=>{console.log(res);})
+            .catch((err) => {alert("Mint has failed.");});
+        }
+          let mintCount = await contract.methods.getMintedCount(minterAddress).call();
+          setMintCnt(mintCount);
+        
+          await wait(3000);
+      }
+
     }
     
   }
