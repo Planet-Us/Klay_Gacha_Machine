@@ -416,6 +416,24 @@ program
     ret = caver.klay.accounts.wallet.getAccount(0);
     
     let mintCount = await contract.methods.getMintedCount(minterAddress).call();
+
+
+  if(options.network == 'mainnet'){
+    ret = await caver.klay.sendTransaction({
+      type: 'SMART_CONTRACT_EXECUTION',
+      from: minterAddress,
+      to: gachaAddress,
+      value: caver.utils.toPeb((0.11 * mintNum).toString(), 'KLAY'),
+      data: contract.methods.mint(mintCount, minterAddress,mintNum, minterAddress).encodeABI(),
+      gas: gaslimit
+    }).then(async (res)=>{
+      console.log("Mint has succeded");
+      mintCount = await contract.methods.getMintedCount(minterAddress).call();
+      console.log("You've minted " + mintCount + " of NFTs");
+    })
+    .catch((err) => {alert("Mint has failed.");});  
+  }else if (options.network == 'baobab'){
+
     ret = await caver.klay.sendTransaction({
       type: 'SMART_CONTRACT_EXECUTION',
       from: minterAddress,
@@ -432,6 +450,7 @@ program
       console.log(err);
       console.log("Mint has failed.");});
 
+  }
 });
 
 
