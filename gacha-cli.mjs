@@ -16,7 +16,7 @@ const contractJson = contractBuffer.toString();
 const contractData = JSON.parse(contractJson);
 
 let gachaAddress = contractData.gachaAddress;
-const gachaABI = contractData.gachaABI;
+let gachaABI = contractData.gachaABI;
 
 
 program.version('0.0.2');
@@ -59,17 +59,28 @@ program.command('verify')
   const cacheJSON = cacheBuffer.toString();
   const cacheData = JSON.parse(cacheJSON);
   let flag = true;
+  let tempArr = new Array();
+  let uriCnt = 0;
   for(var i = 0;i<cacheData.items.length;i++){
-    ret = await contract.methods.getUploaded(minterAddress,i, cacheData.items[i].link).call();
-    if(ret.toString() == "true"){
-        console.log("Uploaded number " + i + ": on chain");
-        cacheData.items[i].onChain = "true";
-    }else{
-        console.log("Uploaded number " + i + ": it's NOT on chain");
-        cacheData.items[i].onChain = "false";
-        flag = false;
+    tempArr.push(cacheData.items[i].link);
+    uriCnt++;
+    if((uriCnt)%100 == 0 || i == (cacheData.items.length-1)){
+      ret = await contract.methods.getUploaded(minterAddress,(i+1-uriCnt),uriCnt, tempArr).call();
+      for(var j = 0;j<uriCnt;j++){
+        if(ret[j].toString() == "true"){
+            console.log("Uploaded number " + j + ": on chain");
+            cacheData.items[j].onChain = "true";
+        }else{
+            console.log("Uploaded number " + j + ": it's NOT on chain");
+            cacheData.items[j].onChain = "false";
+            flag = false;
+        }
+      }
+      uriCnt = 0;
+      tempArr = [];
     }
-    ret = await wait(1500);
+
+    // ret = await wait(1500);
   }  
   if(!flag){
       console.log("Some of uploaded are NOT on chain. Please upload again.");
@@ -121,6 +132,7 @@ program
     }else if(options.network == 'mainnet'){
         rpcURL = contractData.mainnetRPCURL;
         caver = await new Caver(rpcURL);
+        gachaAddress = contractData.gachaAddress;
         contract = await caver.contract.create(gachaABI, gachaAddress);
     }else{
       throw new Error(
@@ -163,8 +175,10 @@ program
     let cacheData = '';    
     let cacheCnt = 0;
     var uriCnt = 0;
-    let uriMetaForUpload = "";
+    let uriMetaForUpload = new Array();
     var items = new Array();
+    let uploadedCnt = 0;
+    let uploadedCntFlag = 0;
     
     if(!fs.existsSync('./.cache')){
       fs.mkdirSync('./.cache');
@@ -172,7 +186,7 @@ program
         type: 'SMART_CONTRACT_EXECUTION',
         from: minterAddress,
         to: gachaAddress,
-        data: contract.methods.mintNewToken(tokenName, tokenSymbol).encodeABI(),
+        data: contract.methods.mintNewToken(tokenName, tokenSymbol,totalCnt).encodeABI(),
         gas: '5000000'
       }).then(console.log("New collection is successfully made."));
       nftContract = ret.logs[0].address;
@@ -189,6 +203,15 @@ program
       }
       for(let j = 0;j<dataCache.items.length;j++){
         if(dataCache.items[j].onChain == "false"){   
+          uploadedCnt = j;
+          uploadedCntFlag = 1;
+          break;
+        }else{
+          items.push(dataCache.items[j]); 
+        }
+      }
+      if(uploadedCntFlag == 1){
+        for(let j = uploadedCnt;j<dataCache.items.length;j++){
           const metadata = dirName + '/' + j + '.json';        
           const dataBuffer = fs.readFileSync(metadata);
           const dataJson = dataBuffer.toString();
@@ -213,20 +236,23 @@ program
               uriMeta = cidMeta;         
             }
           }   
-          
-          ret = await caver.klay.sendTransaction({
-            type: 'SMART_CONTRACT_EXECUTION',
-            from: minterAddress,
-            to: gachaAddress,
-            data: contract.methods.upload(totalCnt, j, uriMeta).encodeABI(),
-            gas: '1000000'
-          });
-          
-          ret = await contract.methods.getUploaded(minterAddress,j, uriMeta).call();
-          if(ret.toString() == "true"){
-            console.log("Uploaded number " + j + ": on chain");          
+          uriMetaForUpload.push(uriMeta);
+        }
+        
+        ret = await caver.klay.sendTransaction({
+          type: 'SMART_CONTRACT_EXECUTION',
+          from: minterAddress,
+          to: gachaAddress,
+          data: contract.methods.uploadBulk(totalCnt, j, uriMetaForUpload,(dataCache.items.length-uploadedCnt)).encodeABI(),
+          gas: '1000000'
+        });
+        
+        ret = await contract.methods.getUploaded(minterAddress,uploadedCnt,(dataCache.items.length-uploadedCnt), uriMetaForUpload).call();
+        for(let j = 0;j<(dataCache.items.length-uploadedCnt);j++){
+          if(ret[j].toString() == "true"){
+            console.log("Uploaded number " + (j + uploadedCnt) + ": on chain");          
             items.push({
-              "id" : j,
+              "id" : j + uploadedCnt,
               "link" : uriMeta,
               "name" : metadataJson.name,
               "onChain" : "true"
@@ -234,15 +260,12 @@ program
           }else{      
             console.log("Uploaded number " + j + ": is still not on chain");   
             items.push({
-              "id" : j,
+              "id" : j + uploadedCnt,
               "link" : uriMeta,
               "name" : metadataJson.name,
               "onChain" : "false"
             });   
-
           }
-        }else{
-          items.push(dataCache.items[j]); 
         }
       }
       
@@ -256,19 +279,20 @@ program
 
       console.log("Start to upload from " + dataCache.items.length + "...");
       uriCnt = 0;
-      cacheCnt = dataCache.items.length;
+      cacheCnt = dataCache.items.length;  
+      uriMetaForUpload = [];
     }else{    
       ret = await caver.klay.sendTransaction({
         type: 'SMART_CONTRACT_EXECUTION',
         from: minterAddress,
         to: gachaAddress,
-        data: contract.methods.mintNewToken(tokenName, tokenSymbol).encodeABI(),
+        data: contract.methods.mintNewToken(tokenName, tokenSymbol,totalCnt).encodeABI(),
         gas: '5000000'
       }).then(console.log("New collection is successfully made."));
       nftContract = ret.logs[0].address;
       console.log("NFT contract address is ", ret.logs[0].address);
     }
-    for(let i = cacheCnt;i<totalCnt;i++){     
+    for(let i = cacheCnt;i<totalCnt;i++){   
       const metadata = dirName + '/' + i + '.json';        
       const dataBuffer = fs.readFileSync(metadata);
       const dataJson = dataBuffer.toString();
@@ -298,20 +322,20 @@ program
       if(options.aws){            
         cidMeta = await awsUpload(metadata, "json"); 
         uriMeta = cidMeta;         
-        uriMetaForUpload = uriMetaForUpload + uriMeta;  
+        uriMetaForUpload.push(uriMeta);  
       }else if(options.ipfs){            
         cidMeta = await pinFileToIPFS(metadata); 
         uriMeta = "ipfs://" + cidMeta;      
-        uriMetaForUpload = uriMetaForUpload + uriMeta; 
+        uriMetaForUpload.push(uriMeta);  
       }else{
         if(configData.pinataApiKey.length > 0){         
           cidMeta = await pinFileToIPFS(metadata); 
           uriMeta = "ipfs://" + cidMeta;      
-          uriMetaForUpload = uriMetaForUpload + uriMeta; 
+          uriMetaForUpload.push(uriMeta);  
         }else if(configData.awsAccessKey.length > 0){
           cidMeta = await awsUpload(metadata, "json"); 
           uriMeta = cidMeta;         
-          uriMetaForUpload = uriMetaForUpload + uriMeta;  
+          uriMetaForUpload.push(uriMeta);  
         }
       }
 
@@ -335,6 +359,7 @@ program
             "items" : items,
             "NFTContract" : nftContract
             }    
+
           ret = await caver.klay.sendTransaction({
             type: 'SMART_CONTRACT_EXECUTION',
             from: minterAddress,
@@ -345,7 +370,7 @@ program
           
           fs.writeFileSync(CACHE_PATH, JSON.stringify(cacheData));
           uriCnt = 0;
-          uriMetaForUpload = '';
+          uriMetaForUpload = [];
         }
     }
 });
@@ -417,23 +442,6 @@ program
     
     let mintCount = await contract.methods.getMintedCount(minterAddress).call();
 
-
-  if(options.network == 'mainnet'){
-    ret = await caver.klay.sendTransaction({
-      type: 'SMART_CONTRACT_EXECUTION',
-      from: minterAddress,
-      to: gachaAddress,
-      value: caver.utils.toPeb((0.11 * mintNum).toString(), 'KLAY'),
-      data: contract.methods.mint(mintCount, minterAddress,mintNum, minterAddress).encodeABI(),
-      gas: gaslimit
-    }).then(async (res)=>{
-      console.log("Mint has succeded");
-      mintCount = await contract.methods.getMintedCount(minterAddress).call();
-      console.log("You've minted " + mintCount + " of NFTs");
-    })
-    .catch((err) => {alert("Mint has failed.");});  
-  }else if (options.network == 'baobab'){
-
     ret = await caver.klay.sendTransaction({
       type: 'SMART_CONTRACT_EXECUTION',
       from: minterAddress,
@@ -450,7 +458,6 @@ program
       console.log(err);
       console.log("Mint has failed.");});
 
-  }
 });
 
 
@@ -506,11 +513,198 @@ program
         }).then((res) => {
           console.log("Number " + startTokenId + " has sent.");
           startTokenId++;        
+        })
+        .catch((err) => {
+          console.log(err);
+          console.log("Transfer has failed.");
+          console.log("가스비가 모자라거나, 소유하지 않은 NFT일 수 있습니다. 이외에 Transfer가 끊긴 경우, 현재까지 진행된 Transfer 리스트를 transferList.json에서 삭제하시고 재실행해보시길 바랍니다.");
         });
       }     
     }      
 });
 
+
+program
+.command('getMintCnt')
+.requiredOption(
+  '-n, --network <string>',
+  'JSON file with gacha machine settings',
+)
+.action(async (options) => {  
+    let rpcURL;
+    let ret;
+    let contract;
+    const configBuffer = fs.readFileSync('./config.json');
+    const configJson = configBuffer.toString();
+    const configData = JSON.parse(configJson);
+    const imageExtension = configData.imageExtension;
+    let caver;
+    
+    if(options.network == 'baobab'){
+        rpcURL = contractData.baobabRPCURL;
+        caver = await new Caver(rpcURL);
+        gachaAddress = contractData.gachaAddressBaobab;
+        contract = await caver.contract.create(gachaABI, gachaAddress);
+    }else if(options.network == 'mainnet'){
+        rpcURL = contractData.mainnetRPCURL;
+        caver = await new Caver(rpcURL);
+        contract = await caver.contract.create(gachaABI, gachaAddress);
+    }else{
+      throw new Error(
+        'The Network name is wrong. 네트워크명은 baobab이나 mainnet으로 입력 바랍니다.',
+      );
+    }
+    
+
+    const minterAddress = configData.TreasuryAccount;
+    const minterPrivateKey = configData.PrivateKey;
+    const tokenName = configData.TokenName;
+    const tokenSymbol = configData.TokenSymbol;
+    ret = caver.klay.accounts.createWithAccountKey(minterAddress, minterPrivateKey);
+    ret = caver.klay.accounts.wallet.add(ret);
+    ret = caver.klay.accounts.wallet.getAccount(0);
+    
+    let mintCount = await contract.methods.getMintedCount(minterAddress).call();
+    console.log(mintCount);
+
+});
+
+program
+.command('nftBurn')
+.argument(
+  '<number>',
+  'Number of NFTs you want to burn',
+)
+.requiredOption(
+  '-n, --network <string>',
+  'JSON file with gacha machine settings',
+)
+.action(async (files,options, cmd) => {  
+  const tokenId = parseInt(cmd.args[0]);
+    console.log(options);
+    let rpcURL;
+    let ret;
+    let contract;
+    const configBuffer = fs.readFileSync('./config.json');
+    const configJson = configBuffer.toString();
+    const configData = JSON.parse(configJson);
+    const cacheBuffer = fs.readFileSync(CACHE_PATH);
+    const cacheJson = cacheBuffer.toString();
+    const dataCache = JSON.parse(cacheJson);
+    const imageExtension = configData.imageExtension;
+    let caver;
+    
+    if(options.network == 'baobab'){
+        rpcURL = contractData.baobabRPCURL;
+        caver = await new Caver(rpcURL);
+        gachaAddress = dataCache.NFTContract;
+        gachaABI = contractData.NFTABI;
+        contract = await caver.contract.create(gachaABI, gachaAddress);
+    }else if(options.network == 'mainnet'){
+        rpcURL = contractData.mainnetRPCURL;
+        caver = await new Caver(rpcURL);
+        gachaAddress = dataCache.NFTContract;
+        gachaABI = contractData.NFTABI;
+        contract = await caver.contract.create(gachaABI, gachaAddress);
+    }else{
+      throw new Error(
+        'The Network name is wrong. 네트워크명은 baobab이나 mainnet으로 입력 바랍니다.',
+      );
+    }
+    
+    const minterAddress = configData.TreasuryAccount;
+    const minterPrivateKey = configData.PrivateKey;
+    ret = caver.klay.accounts.createWithAccountKey(minterAddress, minterPrivateKey);
+    ret = caver.klay.accounts.wallet.add(ret);
+    ret = caver.klay.accounts.wallet.getAccount(0);
+
+    
+    ret = await caver.klay.sendTransaction({
+      type: 'SMART_CONTRACT_EXECUTION',
+      from: minterAddress,
+      to: gachaAddress,
+      data: contract.methods.burnSingle(tokenId).encodeABI(),
+      gas: "1000000"
+    }).then(async (res)=>{
+      console.log("Burn has succeded");
+    })
+    .catch((err) => {
+      console.log(err);
+      console.log("Burn has failed.");
+      console.log("소각할 가스비가 모자라거나, 소각할 NFT의 소유자가 아닐 수 있습니다.");
+    });
+    
+    
+});
+
+
+program
+.command('setPurchaseLimit')
+.argument(
+  '<number>',
+  'Number of NFTs you want to set the purchase limit',
+)
+.requiredOption(
+  '-n, --network <string>',
+  'JSON file with gacha machine settings',
+)
+.action(async (files,options, cmd) => {  
+  const purchaseLimit = parseInt(cmd.args[0]);
+    console.log(options);
+    let rpcURL;
+    let ret;
+    let contract;
+    const configBuffer = fs.readFileSync('./config.json');
+    const configJson = configBuffer.toString();
+    const configData = JSON.parse(configJson);
+    const cacheBuffer = fs.readFileSync(CACHE_PATH);
+    const cacheJson = cacheBuffer.toString();
+    const dataCache = JSON.parse(cacheJson);
+    const imageExtension = configData.imageExtension;
+    let caver;
+    
+    if(options.network == 'baobab'){
+        rpcURL = contractData.baobabRPCURL;
+        caver = await new Caver(rpcURL);
+        gachaAddress = dataCache.NFTContract;
+        gachaABI = contractData.NFTABI;
+        contract = await caver.contract.create(gachaABI, gachaAddress);
+    }else if(options.network == 'mainnet'){
+        rpcURL = contractData.mainnetRPCURL;
+        caver = await new Caver(rpcURL);
+        gachaAddress = dataCache.NFTContract;
+        gachaABI = contractData.NFTABI;
+        contract = await caver.contract.create(gachaABI, gachaAddress);
+    }else{
+      throw new Error(
+        'The Network name is wrong. 네트워크명은 baobab이나 mainnet으로 입력 바랍니다.',
+      );
+    }
+    
+    const minterAddress = configData.TreasuryAccount;
+    const minterPrivateKey = configData.PrivateKey;
+    ret = caver.klay.accounts.createWithAccountKey(minterAddress, minterPrivateKey);
+    ret = caver.klay.accounts.wallet.add(ret);
+    ret = caver.klay.accounts.wallet.getAccount(0);
+
+    
+    ret = await caver.klay.sendTransaction({
+      type: 'SMART_CONTRACT_EXECUTION',
+      from: minterAddress,
+      to: gachaAddress,
+      data: contract.methods.updatePurchaseLimit(purchaseLimit).encodeABI(),
+      gas: "1000000"
+    }).then(async (res)=>{
+      console.log("Purchase limit set has been done");
+    })
+    .catch((err) => {
+      console.log(err);
+      console.log("Purchase limit set has failed");
+      console.log("가스비를 체크해주시기 바랍니다.");
+    });
+    
+    
+});
 
 async function wait(ms){
     return new Promise((resolve) => {

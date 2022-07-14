@@ -1,15 +1,13 @@
 {
-    "gachaAddressBaobab" : "0xF3fe5c605988443a5794D0750160a159c3B58FBf",
-    "gachaAddress" : "0xA3CeDE212d86D3E673F08641c4228c672aba4042",
+    "gachaAddressBaobab" : "0x60bFbc165b142D048a356E6574A3a8A9EB6D0591",
+    "gachaAddress" : "0xc8D3B5602F3c9459E6d37f549551F908C7f26349",
     "gachaABI" : [
 		{
 			"inputs": [],
-			"payable": false,
 			"stateMutability": "nonpayable",
 			"type": "constructor"
 		},
 		{
-			"constant": true,
 			"inputs": [
 				{
 					"internalType": "address",
@@ -25,33 +23,10 @@
 					"type": "uint256"
 				}
 			],
-			"payable": false,
 			"stateMutability": "view",
 			"type": "function"
 		},
 		{
-			"constant": true,
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "cnt",
-					"type": "uint256"
-				}
-			],
-			"name": "getTokenURI",
-			"outputs": [
-				{
-					"internalType": "string",
-					"name": "",
-					"type": "string"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
 			"inputs": [
 				{
 					"internalType": "address",
@@ -64,46 +39,29 @@
 					"type": "uint256"
 				},
 				{
-					"internalType": "string",
+					"internalType": "uint256",
+					"name": "end",
+					"type": "uint256"
+				},
+				{
+					"internalType": "string[]",
 					"name": "_tokenURI",
-					"type": "string"
+					"type": "string[]"
 				}
 			],
 			"name": "getUploaded",
 			"outputs": [
 				{
-					"internalType": "bool",
+					"internalType": "bool[100]",
 					"name": "",
-					"type": "bool"
+					"type": "bool[100]"
 				}
 			],
-			"payable": false,
 			"stateMutability": "view",
 			"type": "function"
 		},
 		{
-			"constant": true,
-			"inputs": [],
-			"name": "isMintExist",
-			"outputs": [
-				{
-					"internalType": "address",
-					"name": "",
-					"type": "address"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": false,
 			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_tokenNum",
-					"type": "uint256"
-				},
 				{
 					"internalType": "address payable",
 					"name": "minterAddress",
@@ -122,12 +80,10 @@
 			],
 			"name": "mint",
 			"outputs": [],
-			"payable": true,
 			"stateMutability": "payable",
 			"type": "function"
 		},
 		{
-			"constant": false,
 			"inputs": [
 				{
 					"internalType": "string",
@@ -138,6 +94,11 @@
 					"internalType": "string",
 					"name": "_symbol",
 					"type": "string"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_tokenMaxCnt",
+					"type": "uint256"
 				}
 			],
 			"name": "mintNewToken",
@@ -148,12 +109,10 @@
 					"type": "address"
 				}
 			],
-			"payable": false,
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
-			"constant": true,
 			"inputs": [
 				{
 					"internalType": "address",
@@ -164,17 +123,15 @@
 			"name": "nftManager",
 			"outputs": [
 				{
-					"internalType": "contract NFTMinter",
+					"internalType": "address",
 					"name": "",
 					"type": "address"
 				}
 			],
-			"payable": false,
 			"stateMutability": "view",
 			"type": "function"
 		},
 		{
-			"constant": false,
 			"inputs": [
 				{
 					"internalType": "uint256",
@@ -187,40 +144,9 @@
 					"type": "uint256"
 				},
 				{
-					"internalType": "string",
+					"internalType": "string[]",
 					"name": "_tokenURI",
-					"type": "string"
-				}
-			],
-			"name": "upload",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
-			"payable": false,
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_maxCnt",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "cnt",
-					"type": "uint256"
-				},
-				{
-					"internalType": "string",
-					"name": "_tokenURI",
-					"type": "string"
+					"type": "string[]"
 				},
 				{
 					"internalType": "uint256",
@@ -229,14 +155,7 @@
 				}
 			],
 			"name": "uploadBulk",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
-			"payable": false,
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		}
@@ -244,12 +163,10 @@
     "gachaABIBaobab" : [
 		{
 			"inputs": [],
-			"payable": false,
 			"stateMutability": "nonpayable",
 			"type": "constructor"
 		},
 		{
-			"constant": true,
 			"inputs": [
 				{
 					"internalType": "address",
@@ -265,33 +182,10 @@
 					"type": "uint256"
 				}
 			],
-			"payable": false,
 			"stateMutability": "view",
 			"type": "function"
 		},
 		{
-			"constant": true,
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "cnt",
-					"type": "uint256"
-				}
-			],
-			"name": "getTokenURI",
-			"outputs": [
-				{
-					"internalType": "string",
-					"name": "",
-					"type": "string"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
 			"inputs": [
 				{
 					"internalType": "address",
@@ -304,40 +198,28 @@
 					"type": "uint256"
 				},
 				{
-					"internalType": "string",
+					"internalType": "uint256",
+					"name": "end",
+					"type": "uint256"
+				},
+				{
+					"internalType": "string[]",
 					"name": "_tokenURI",
-					"type": "string"
+					"type": "string[]"
 				}
 			],
 			"name": "getUploaded",
 			"outputs": [
 				{
-					"internalType": "bool",
+					"internalType": "bool[]",
 					"name": "",
-					"type": "bool"
+					"type": "bool[]"
 				}
 			],
-			"payable": false,
 			"stateMutability": "view",
 			"type": "function"
 		},
 		{
-			"constant": true,
-			"inputs": [],
-			"name": "isMintExist",
-			"outputs": [
-				{
-					"internalType": "address",
-					"name": "",
-					"type": "address"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": false,
 			"inputs": [
 				{
 					"internalType": "address payable",
@@ -357,12 +239,10 @@
 			],
 			"name": "mint",
 			"outputs": [],
-			"payable": true,
 			"stateMutability": "payable",
 			"type": "function"
 		},
 		{
-			"constant": false,
 			"inputs": [
 				{
 					"internalType": "string",
@@ -373,6 +253,11 @@
 					"internalType": "string",
 					"name": "_symbol",
 					"type": "string"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_tokenMaxCnt",
+					"type": "uint256"
 				}
 			],
 			"name": "mintNewToken",
@@ -383,12 +268,10 @@
 					"type": "address"
 				}
 			],
-			"payable": false,
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
-			"constant": true,
 			"inputs": [
 				{
 					"internalType": "address",
@@ -399,17 +282,15 @@
 			"name": "nftManager",
 			"outputs": [
 				{
-					"internalType": "contract NFTMinter",
+					"internalType": "address",
 					"name": "",
 					"type": "address"
 				}
 			],
-			"payable": false,
 			"stateMutability": "view",
 			"type": "function"
 		},
 		{
-			"constant": false,
 			"inputs": [
 				{
 					"internalType": "uint256",
@@ -422,40 +303,9 @@
 					"type": "uint256"
 				},
 				{
-					"internalType": "string",
+					"internalType": "string[]",
 					"name": "_tokenURI",
-					"type": "string"
-				}
-			],
-			"name": "upload",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
-			"payable": false,
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_maxCnt",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "cnt",
-					"type": "uint256"
-				},
-				{
-					"internalType": "string",
-					"name": "_tokenURI",
-					"type": "string"
+					"type": "string[]"
 				},
 				{
 					"internalType": "uint256",
@@ -464,6 +314,276 @@
 				}
 			],
 			"name": "uploadBulk",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	],
+	"NFTABI": [
+		{
+			"inputs": [
+				{
+					"internalType": "address payable",
+					"name": "_owner",
+					"type": "address"
+				},
+				{
+					"internalType": "string",
+					"name": "_name",
+					"type": "string"
+				},
+				{
+					"internalType": "string",
+					"name": "_symbol",
+					"type": "string"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_tokenMaxCnt",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "constructor"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "owner",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "approved",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "uint256",
+					"name": "tokenId",
+					"type": "uint256"
+				}
+			],
+			"name": "Approval",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "owner",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "operator",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "bool",
+					"name": "approved",
+					"type": "bool"
+				}
+			],
+			"name": "ApprovalForAll",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "previousOwner",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "newOwner",
+					"type": "address"
+				}
+			],
+			"name": "OwnershipTransferred",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "from",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "uint256",
+					"name": "tokenId",
+					"type": "uint256"
+				}
+			],
+			"name": "Transfer",
+			"type": "event"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"name": "_balances",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "tokenId",
+					"type": "uint256"
+				}
+			],
+			"name": "approve",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "owner",
+					"type": "address"
+				}
+			],
+			"name": "balanceOf",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_tokenId",
+					"type": "uint256"
+				}
+			],
+			"name": "burnSingle",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "tokenId",
+					"type": "uint256"
+				}
+			],
+			"name": "getApproved",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getMintedCount",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "cnt",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "end",
+					"type": "uint256"
+				},
+				{
+					"internalType": "string[]",
+					"name": "_tokenURI",
+					"type": "string[]"
+				}
+			],
+			"name": "getUploaded",
+			"outputs": [
+				{
+					"internalType": "bool[100]",
+					"name": "",
+					"type": "bool[100]"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "owner",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "operator",
+					"type": "address"
+				}
+			],
+			"name": "isApprovedForAll",
 			"outputs": [
 				{
 					"internalType": "bool",
@@ -471,7 +591,323 @@
 					"type": "bool"
 				}
 			],
-			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address payable",
+					"name": "minterAddress",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "mintNum",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "mintee",
+					"type": "address"
+				}
+			],
+			"name": "mint2",
+			"outputs": [],
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "name",
+			"outputs": [
+				{
+					"internalType": "string",
+					"name": "",
+					"type": "string"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "owner",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "tokenId",
+					"type": "uint256"
+				}
+			],
+			"name": "ownerOf",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "purchaseLimit",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "renounceOwnership",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "from",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "tokenId",
+					"type": "uint256"
+				}
+			],
+			"name": "safeTransferFrom",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "from",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "tokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes",
+					"name": "_data",
+					"type": "bytes"
+				}
+			],
+			"name": "safeTransferFrom",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "operator",
+					"type": "address"
+				},
+				{
+					"internalType": "bool",
+					"name": "approved",
+					"type": "bool"
+				}
+			],
+			"name": "setApprovalForAll",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes4",
+					"name": "interfaceId",
+					"type": "bytes4"
+				}
+			],
+			"name": "supportsInterface",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "symbol",
+			"outputs": [
+				{
+					"internalType": "string",
+					"name": "",
+					"type": "string"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "tokenMaxCnt",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "tokenId",
+					"type": "uint256"
+				}
+			],
+			"name": "tokenURI",
+			"outputs": [
+				{
+					"internalType": "string",
+					"name": "",
+					"type": "string"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"name": "tokenUriStore",
+			"outputs": [
+				{
+					"internalType": "string",
+					"name": "",
+					"type": "string"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "from",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "tokenId",
+					"type": "uint256"
+				}
+			],
+			"name": "transferFrom",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "newOwner",
+					"type": "address"
+				}
+			],
+			"name": "transferOwnership",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_purchaseLimit",
+					"type": "uint256"
+				}
+			],
+			"name": "updatePurchaseLimit",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_maxCnt",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "cnt",
+					"type": "uint256"
+				},
+				{
+					"internalType": "string[]",
+					"name": "_tokenURIs",
+					"type": "string[]"
+				},
+				{
+					"internalType": "uint256",
+					"name": "uploadCnt",
+					"type": "uint256"
+				}
+			],
+			"name": "uploadBulk",
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		}
